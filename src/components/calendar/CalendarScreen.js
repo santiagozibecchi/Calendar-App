@@ -9,6 +9,8 @@ import CalendarModal from './CalendarModal';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/es';
+import { useDispatch, useSelector } from 'react-redux';
+import { uiOpenModal } from '../../actions/ui';
 
 moment.locale('es');
 
@@ -31,16 +33,18 @@ const CalendarScreen = () => {
       // Mantener el estado de que cuando una variable cambie
       // actualize las cosas
 
-      const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month')
+      const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month');
+
+      const dispatch = useDispatch();
 
       // EVENTOS
       const onDoubleClick = (e) => {
-
-            console.log(e);
+            dispatch(uiOpenModal())
+            // console.log(e);
       }
       const onSelectEvent = (e) => {
 
-            console.log(e);
+            // console.log(e);
       }
       // Este evento esta capturando la pantalla donde estoy
       // capturo y guardo la ultima vista en el LS.
