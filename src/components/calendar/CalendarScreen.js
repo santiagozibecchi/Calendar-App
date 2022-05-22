@@ -9,8 +9,10 @@ import CalendarModal from './CalendarModal';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/es';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
+import { eventSetActive } from '../../actions/events';
+import AddNewFab from '../ui/AddNewFab';
 
 moment.locale('es');
 
@@ -43,9 +45,10 @@ const CalendarScreen = () => {
             // console.log(e);
       }
       const onSelectEvent = (e) => {
-
-            // console.log(e);
+            dispatch(eventSetActive(e));
+            dispatch(uiOpenModal());
       }
+
       // Este evento esta capturando la pantalla donde estoy
       // capturo y guardo la ultima vista en el LS.
       const onViewChange = (e) => {
@@ -89,6 +92,8 @@ const CalendarScreen = () => {
                         onSelectEvent={onSelectEvent}
                         onView={onViewChange}
                   />
+
+                  <AddNewFab />
 
                   <CalendarModal />
             </div>

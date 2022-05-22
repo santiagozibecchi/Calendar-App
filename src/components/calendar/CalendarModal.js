@@ -7,6 +7,7 @@ import moment from 'moment';
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
+import { evenAddNew } from '../../actions/events';
 
 const customStyles = {
       content: {
@@ -28,7 +29,7 @@ const nowPlus1 = now.clone().add(1, 'hours');
 const CalendarModal = () => {
 
       const dispatch = useDispatch();
-      const { modalOpen } = useSelector( state => state.ui );
+      const { modalOpen } = useSelector(state => state.ui);
 
       // toDate es para que lo haga con la fecha actual
       const [dateStart, setDateStart] = useState(now.toDate());
@@ -58,7 +59,6 @@ const CalendarModal = () => {
       }
 
       const closeModal = () => {
-            //TODO cerrar modal
             console.log('Cerrar modal');
             dispatch(uiCloseModal());
       }
@@ -90,11 +90,19 @@ const CalendarModal = () => {
             if (momentStart.isSameOrAfter(momentEnd)) {
                   return Swal.fire('Error', 'La fecha final debe de ser mayor a la fecha de inicio')
             }
-            if ( title.trim().length < 2 ) {
+            if (title.trim().length < 2) {
                   return setTitleValid(false)
             }
 
             //TODO guardar en DB
+            dispatch(evenAddNew({
+                  ...formValue,
+                  id: new Date().getTime(),
+                  user: {
+                        _id: '123',
+                        name: 'Andres'
+                  }
+            }));
 
             // para que se quite la clase de boostrap
             setTitleValid(true);
