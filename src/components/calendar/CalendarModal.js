@@ -1,5 +1,5 @@
 // Mantener y actualizar los modals
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 
 import DateTimePicker from 'react-datetime-picker';
@@ -7,7 +7,7 @@ import moment from 'moment';
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { evenAddNew } from '../../actions/events';
+import { evenAddNew, eventClearActiveEvent, eventUpdate } from '../../actions/events';
 
 const customStyles = {
       content: {
@@ -26,24 +26,41 @@ Modal.setAppElement('#root');
 const now = moment().minutes(0).seconds(0).add(1, 'hours');
 const nowPlus1 = now.clone().add(1, 'hours');
 
+const initEvent = {
+      title: '',
+      notes: '',
+      start: now.toDate(),
+      end: nowPlus1.toDate()
+}
+
 const CalendarModal = () => {
 
       const dispatch = useDispatch();
       const { modalOpen } = useSelector(state => state.ui);
+      const { activeEvent } = useSelector(state => state.calendar);
 
       // toDate es para que lo haga con la fecha actual
       const [dateStart, setDateStart] = useState(now.toDate());
       const [dateEnd, setDateEnd] = useState(nowPlus1.toDate());
       const [titleValid, setTitleValid] = useState(true);
 
-      const [formValue, setFormValues] = useState({
-            title: 'Evento',
-            notes: '',
-            start: now.toDate(),
-            end: nowPlus1.toDate()
-      });
+      const [formValue, setFormValues] = useState(initEvent);
 
       const { title, notes, start, end } = formValue;
+
+      // necesito estar pendiente del activeEvente
+      useEffect(() => {
+            // console.log(activeEvent);
+            // como la primera vez regresa null, hago una validacion para que exista
+            if (activeEvent) {
+                  // si no es null
+                  setFormValues(activeEvent);
+            } else {
+                  // si el activeEvent esta en null:
+                  setFormValues(initEvent);
+            }
+
+      }, [activeEvent, setFormValues])
 
       const handleInputChange = ({ target }) => {
             setFormValues({
@@ -59,8 +76,10 @@ const CalendarModal = () => {
       }
 
       const closeModal = () => {
-            console.log('Cerrar modal');
+            // console.log('Cerrar modal');
             dispatch(uiCloseModal());
+            dispatch(eventClearActiveEvent())
+            setFormValues(initEvent);
       }
 
       // recibo un evento que es la fecha
@@ -94,15 +113,20 @@ const CalendarModal = () => {
                   return setTitleValid(false)
             }
 
-            //TODO guardar en DB
-            dispatch(evenAddNew({
-                  ...formValue,
-                  id: new Date().getTime(),
-                  user: {
-                        _id: '123',
-                        name: 'Andres'
-                  }
-            }));
+            // El active event me sirve para saber si puedo editar o no, ya que si no esta seleccionado esta en null
+            if (activeEvent) {
+                  dispatch(eventUpdate(formValue))
+            } else {
+                  // creamos una nueva mientras que arriba la actualizamos
+                  dispatch(evenAddNew({
+                        ...formValue,
+                        id: new Date().getTime(),
+                        user: {
+                              _id: '123',
+                              name: 'Andres'
+                        }
+                  }));
+            }
 
             // para que se quite la clase de boostrap
             setTitleValid(true);
@@ -119,7 +143,7 @@ const CalendarModal = () => {
                   className="modal"
                   overlayClassName="modal-fondo"
             >
-                  <h1> Nuevo evento </h1>
+                  <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'} </h1>
                   <hr />
                   <form
                         className="container"
