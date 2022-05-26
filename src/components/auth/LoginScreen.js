@@ -33,9 +33,9 @@ export const LoginScreen = () => {
       const handleRegister = (e) => {
             e.preventDefault();
 
-            // if (rPassword1 !== rPassword2) {
-            //       Swal.fire('Error', 'Las contraseñas deben coicidir', 'error')
-            // }
+            if (rPassword1 !== rPassword2) {
+                  Swal.fire('Error', 'Las contraseñas deben coicidir', 'error')
+            }
             dispatch(startRegister( rEmail, rPassword1, rName))
       }
 

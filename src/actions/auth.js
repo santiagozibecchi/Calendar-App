@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { fetchConToken, fetchSinToken } from "../helpers/fetch"
 import { types } from "../types/types";
+import { eventStartCleanStorage } from "../actions/events";
 
 export const startLogin = (email, password) => {
       // porque es una tarea sincrona
@@ -28,7 +29,7 @@ export const startRegister = (email, password, name) => {
       return async (dispatch) => {
 
             const resp = await fetchSinToken('auth/new', { email, password, name }, 'POST');
-            const body = resp.json();
+            const body = await resp.json();
 
             if (body.ok) {
                   localStorage.setItem('token', body.token);
@@ -47,11 +48,9 @@ export const startRegister = (email, password, name) => {
 export const startChecking = () => {
       return async (dispatch) => {
 
-            
             const resp = await fetchConToken('auth/renew');
-            const body = resp.json();
-            console.log(body)
-            
+            const body = await resp.json();
+
             if (body.ok) {
                   localStorage.setItem('token', body.token);
                   localStorage.setItem('token-init-date', new Date().getTime());
@@ -61,7 +60,6 @@ export const startChecking = () => {
                         name: body.name
                   }))
             } else {
-                  // Swal.fire('Error', body.msg, 'error');
                   dispatch(checkingFinish())
             }
       }
@@ -75,3 +73,13 @@ const login = (user) => ({
       type: types.authLogin,
       payload: user
 })
+
+export const startLogout = () => {
+      return (dispatch) => {
+            localStorage.clear();
+            dispatch(eventStartCleanStorage())
+            dispatch(logout());
+      }
+}
+
+const logout = () => ({ type: types.authLogout })

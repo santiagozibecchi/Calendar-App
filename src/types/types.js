@@ -4,6 +4,8 @@ export const types = {
       uiCloseModal: '[ui Close Modal]',
 
       eventSetActive: '[event] Set Active',
+
+      eventStartAddNew: '[event] Start add new',
       eventAddNew: '[event] Add new',
       eventClearActiveEvent: '[event] Clear active event',
       eventUpdate: '[event] Event updated',
@@ -16,5 +18,10 @@ export const types = {
       authStartRegister: '[auth] Start register',
       authStartTokenRenew: '[auth] Start token renew',
       authLogout: '[auth] Logout',
+
+      // mostrar info cuando la carge
+      eventLoaded: '[event] Events loaded',
+
+      eventCleanStorage: '[event] Clear storege'
 
 }

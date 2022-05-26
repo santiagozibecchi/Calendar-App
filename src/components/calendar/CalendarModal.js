@@ -7,7 +7,7 @@ import moment from 'moment';
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { evenAddNew, eventClearActiveEvent, eventUpdate } from '../../actions/events';
+import { eventClearActiveEvent, eventStartAddNew, eventStartUpdate } from '../../actions/events';
 
 const customStyles = {
       content: {
@@ -115,17 +115,10 @@ const CalendarModal = () => {
 
             // El active event me sirve para saber si puedo editar o no, ya que si no esta seleccionado esta en null
             if (activeEvent) {
-                  dispatch(eventUpdate(formValue))
+                  dispatch(eventStartUpdate(formValue))
             } else {
                   // creamos una nueva mientras que arriba la actualizamos
-                  dispatch(evenAddNew({
-                        ...formValue,
-                        id: new Date().getTime(),
-                        user: {
-                              _id: '123',
-                              name: 'Andres'
-                        }
-                  }));
+                  dispatch(eventStartAddNew(formValue));
             }
 
             // para que se quite la clase de boostrap
